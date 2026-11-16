@@ -1,0 +1,42 @@
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/source-serif-4";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Tokens da identidade RB (mesmos valores do site institucional, já
+ * verificados em contraste WCAG AA). Texto pequeno sobre fundo claro usa
+ * --rb-teal-strong; sobre o petróleo usa --rb-teal-on-dark. --rb-teal fica
+ * só para acentos decorativos e números grandes.
+ */
+@layer base {
+  :root {
+    --rb-teal: 189 90% 34%;
+    --rb-teal-strong: 189 85% 27%;
+    --rb-teal-on-dark: 189 80% 40%;
+    --rb-ink-900: 196 45% 12%;
+    --rb-ink-800: 196 38% 17%;
+    --rb-canvas: 36 22% 97%;
+    --rb-canvas-alt: 36 18% 94%;
+    --rb-graphite: 210 15% 14%;
+    --rb-stone: 30 10% 40%;
+    --rb-stone-line: 30 12% 88%;
+    --rb-cream: 36 30% 96%;
+    --rb-cream-muted: 36 15% 75%;
+    --rb-line-dark: 196 25% 26%;
+  }
+
+  html {
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    @apply bg-rb-canvas text-rb-graphite antialiased;
+    font-family: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Source Serif 4 Variable", ui-serif, Georgia, serif;
+  }
+}
