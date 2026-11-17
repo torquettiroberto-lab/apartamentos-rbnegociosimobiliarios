@@ -6,7 +6,7 @@ export const siteConfig = {
   brand: {
     name: "RB Negócios Imobiliários",
     section: "Apartamentos",
-    url: "https://apartamentos.rbnegociosimobiliarios.com.br",
+    url: "https://imoveis.rbnegociosimobiliarios.com.br",
     institutionalUrl: "https://www.rbnegociosimobiliarios.com.br",
   },
   creci: "F.19.509",
