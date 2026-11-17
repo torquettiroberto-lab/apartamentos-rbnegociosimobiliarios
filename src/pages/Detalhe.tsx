@@ -6,7 +6,7 @@ import { SiteLayout } from "@/components/layout/SiteLayout";
 import { Seo } from "@/components/Seo";
 import { Notice } from "@/components/Notice";
 import { PropertyGallery } from "@/components/PropertyGallery";
-import { formatArea, formatPreco, plural, type Apartamento } from "@/lib/apartamentos";
+import { enderecoPublico, formatArea, formatPreco, plural, type ApartamentoPublico } from "@/lib/apartamentos";
 import { obterPorCodigo } from "@/lib/repositorio";
 import { supabaseConfigurado } from "@/lib/supabase";
 import { whatsappApartamentoUrl } from "@/lib/whatsapp";
@@ -14,7 +14,7 @@ import NotFound from "@/pages/NotFound";
 
 export default function Detalhe() {
   const { codigo = "" } = useParams();
-  const [ap, setAp] = useState<Apartamento | null>(null);
+  const [ap, setAp] = useState<ApartamentoPublico | null>(null);
   const [carregando, setCarregando] = useState(supabaseConfigurado);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -54,7 +54,7 @@ export default function Detalhe() {
               <div>
                 <p className="text-xs uppercase tracking-[0.16em] text-rb-stone">Código {ap.codigo}</p>
                 <h1 className="mt-2 font-rb-serif text-3xl leading-tight md:text-4xl">{ap.titulo}</h1>
-                <p className="mt-2 text-rb-stone">{ap.bairro}, {ap.cidade}</p>
+                <p className="mt-2 text-rb-stone">{enderecoPublico(ap)}</p>
                 <p className="mt-6 font-rb-serif text-4xl">{formatPreco(ap.preco)}</p>
                 <ul className="mt-6 grid grid-cols-2 gap-4 border-y border-rb-stone-line py-5 text-sm">
                   <li className="flex items-center gap-2"><BedDouble className="h-5 w-5" aria-hidden="true" />{plural(ap.quartos, "quarto", "quartos")}</li>

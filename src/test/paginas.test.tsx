@@ -10,6 +10,7 @@ const ap: Apartamento = {
   id: "1", codigo: "AP0245", titulo: "Apartamento 3 quartos - Calafate", descricao: null, preco: 519999,
   cidade: "Belo Horizonte", bairro: "Calafate", quartos: 3, banheiros: 3, vagas: 1, area_privativa: 126.7,
   area_construida: null, status: "reservado", destaque: true, fotos: [], created_at: "", updated_at: "",
+  rua: "Rua das Palmeiras", estado: "MG", cep: "30000000", numero: "123", complemento: "Apto 401",
 };
 
 function renderEm(path: string) {
@@ -55,7 +56,10 @@ describe("PropertyCard", () => {
       </MemoryRouter>,
     );
     expect(screen.getByText("R$ 519.999")).toBeInTheDocument();
-    expect(screen.getByText("Calafate, Belo Horizonte")).toBeInTheDocument();
+    expect(screen.getByText("Rua das Palmeiras, Calafate, Belo Horizonte")).toBeInTheDocument();
+    // privacidade: número, complemento e CEP nunca aparecem na vitrine
+    const html = document.body.innerHTML;
+    for (const privado of ["123", "Apto 401", "30000000", "30000-000"]) expect(html).not.toContain(privado);
     expect(screen.getByText("Código AP0245")).toBeInTheDocument();
     expect(screen.getByText("Reservado")).toBeInTheDocument();
     expect(screen.getByRole("link")).toHaveAttribute("href", "/apartamentos/AP0245");

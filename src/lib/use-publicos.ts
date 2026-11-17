@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import type { Apartamento } from "@/lib/apartamentos";
+import type { ApartamentoPublico } from "@/lib/apartamentos";
 import { listarPublicos } from "@/lib/repositorio";
 import { supabaseConfigurado } from "@/lib/supabase";
 
 /** Carrega os apartamentos visíveis ao público (disponíveis e reservados). */
 export function usePublicos() {
-  const [lista, setLista] = useState<Apartamento[]>([]);
+  const [lista, setLista] = useState<ApartamentoPublico[]>([]);
   const [carregando, setCarregando] = useState(supabaseConfigurado);
   const [erro, setErro] = useState<string | null>(null);
 

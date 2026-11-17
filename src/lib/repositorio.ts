@@ -1,26 +1,32 @@
 import { exigirSupabase } from "@/lib/supabase";
-import { visivelNaListagem, type Apartamento, type ApartamentoInput } from "@/lib/apartamentos";
+import {
+  COLUNAS_PUBLICAS, visivelNaListagem, type Apartamento, type ApartamentoInput, type ApartamentoPublico,
+} from "@/lib/apartamentos";
+import { TIPOS_FOTO_ACEITOS, extensaoDoTipo, removerMetadados } from "@/lib/foto";
 
 const TABELA = "apartamentos";
 export const BUCKET_FOTOS = "apartamentos-fotos";
 export const TAMANHO_MAX_FOTO = 5 * 1024 * 1024;
 
+/** O visitante só tem permissão nessas colunas (ver 0002_endereco.sql): nunca usar select("*") nas leituras públicas. */
+const SELECT_PUBLICO = COLUNAS_PUBLICAS.join(",");
+
 /** Lista pública: disponíveis e reservados, mais novos primeiro. */
-export async function listarPublicos(): Promise<Apartamento[]> {
+export async function listarPublicos(): Promise<ApartamentoPublico[]> {
   const { data, error } = await exigirSupabase()
     .from(TABELA)
-    .select("*")
+    .select(SELECT_PUBLICO)
     .neq("status", "vendido")
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return ((data ?? []) as Apartamento[]).filter(visivelNaListagem);
+  return ((data ?? []) as unknown as ApartamentoPublico[]).filter(visivelNaListagem);
 }
 
 /** Detalhe público por código (mostra também os vendidos, com selo). */
-export async function obterPorCodigo(codigo: string): Promise<Apartamento | null> {
-  const { data, error } = await exigirSupabase().from(TABELA).select("*").eq("codigo", codigo).maybeSingle();
+export async function obterPorCodigo(codigo: string): Promise<ApartamentoPublico | null> {
+  const { data, error } = await exigirSupabase().from(TABELA).select(SELECT_PUBLICO).eq("codigo", codigo).maybeSingle();
   if (error) throw error;
-  return (data as Apartamento | null) ?? null;
+  return (data as unknown as ApartamentoPublico | null) ?? null;
 }
 
 export async function listarTodos(): Promise<Apartamento[]> {
@@ -52,16 +58,19 @@ export async function remover(id: string): Promise<void> {
   if (error) throw error;
 }
 
-/** Envia uma foto ao Storage e devolve a URL pública. */
+/** Envia uma foto ao Storage, sem metadados (EXIF/GPS), e devolve a URL pública. */
 export async function enviarFoto(arquivo: File): Promise<string> {
-  if (!arquivo.type.startsWith("image/")) throw new Error("O arquivo precisa ser uma imagem.");
+  if (!(TIPOS_FOTO_ACEITOS as readonly string[]).includes(arquivo.type)) {
+    throw new Error("Use fotos JPG, PNG, WebP ou AVIF.");
+  }
   if (arquivo.size > TAMANHO_MAX_FOTO) throw new Error("Cada foto pode ter no máximo 5 MB.");
+  const { blob, tipo } = await removerMetadados(arquivo);
+  if (blob.size > TAMANHO_MAX_FOTO) throw new Error("A foto ficou maior que 5 MB. Use uma imagem menor.");
   const cliente = exigirSupabase();
-  const ext = (arquivo.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
-  const caminho = `${crypto.randomUUID()}.${ext || "jpg"}`;
-  const { error } = await cliente.storage.from(BUCKET_FOTOS).upload(caminho, arquivo, {
+  const caminho = `${crypto.randomUUID()}.${extensaoDoTipo(tipo)}`;
+  const { error } = await cliente.storage.from(BUCKET_FOTOS).upload(caminho, blob, {
     cacheControl: "31536000",
-    contentType: arquivo.type,
+    contentType: tipo,
   });
   if (error) throw error;
   return cliente.storage.from(BUCKET_FOTOS).getPublicUrl(caminho).data.publicUrl;
