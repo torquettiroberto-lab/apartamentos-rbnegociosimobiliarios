@@ -15,7 +15,7 @@ export function AdminLayout({ title, children }: { title: string; children: Reac
     return (
       <Container className="py-12">
         <Notice title="Supabase não configurado">
-          Defina VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY (veja o README) para usar o painel.
+          Defina VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY (veja o README) para usar o painel.
         </Notice>
       </Container>
     );

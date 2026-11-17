@@ -34,8 +34,8 @@ fotos e login do painel).
    pessoa poderia criar conta e editar os anúncios.*
 4. Em **Project Settings → API**, copie a **Project URL** e a chave **anon
    public**.
-5. Copie `.env.example` para `.env` e preencha `VITE_SUPABASE_URL` e
-   `VITE_SUPABASE_ANON_KEY`. A chave `anon` é pública por natureza; a
+5. Copie `.env.example` para `.env.local` e preencha `VITE_SUPABASE_URL` e
+   `VITE_SUPABASE_PUBLISHABLE_KEY`. A chave publishable é pública por natureza; a
    segurança vem das regras (RLS) do script. Nunca use a chave `service_role`
    aqui.
 
@@ -52,7 +52,7 @@ npm run build    # build de produção
 
 1. Suba este repositório no GitHub e conecte-o a um novo projeto do Lovable.
 2. No projeto do Lovable, configure as variáveis de ambiente
-   `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` (as mesmas do `.env`).
+   `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` (as mesmas do `.env.local`).
 3. Publique e, em **Settings → Domains**, adicione
    `apartamentos.rbnegociosimobiliarios.com.br`.
 4. No provedor do DNS do domínio, crie o registro que o Lovable indicar para o
