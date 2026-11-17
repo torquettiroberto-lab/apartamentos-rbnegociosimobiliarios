@@ -5,6 +5,7 @@ import { Container } from "@/components/layout/Container";
 import { Notice } from "@/components/Notice";
 import { useAuth } from "@/lib/auth-context";
 import { supabaseConfigurado } from "@/lib/supabase";
+import { mensagemErroLogin } from "@/lib/erro-login";
 
 const campo =
   "mt-1.5 h-11 w-full rounded-[4px] border border-rb-stone-line bg-white px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rb-teal-strong";
@@ -26,8 +27,8 @@ export default function Login() {
     try {
       await entrar(email.trim(), senha);
       navigate("/admin");
-    } catch {
-      setErro("E-mail ou senha inválidos.");
+    } catch (err) {
+      setErro(mensagemErroLogin(err));
     } finally {
       setEnviando(false);
     }
@@ -53,6 +54,9 @@ export default function Login() {
               Senha
               <input type="password" required autoComplete="current-password" className={campo} value={senha} onChange={(e) => setSenha(e.target.value)} />
             </label>
+            {import.meta.env.DEV && (
+              <p className="text-xs text-rb-stone">Projeto Supabase em uso: {new URL(import.meta.env.VITE_SUPABASE_URL as string).host}</p>
+            )}
             {erro && <p role="alert" className="text-sm text-red-800">{erro}</p>}
             <button type="submit" disabled={enviando} className="h-11 w-full rounded-[4px] bg-rb-teal-strong text-sm font-medium text-rb-cream hover:bg-rb-ink-900 disabled:opacity-60">
               {enviando ? "Entrando…" : "Entrar"}
